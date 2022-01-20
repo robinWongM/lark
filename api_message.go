@@ -6,6 +6,7 @@ const (
 	messageURL                = "/open-apis/im/v1/messages?receive_id_type=%s"
 	replyMessageURL           = "/open-apis/im/v1/messages/%s/reply"
 	getMessageURL             = "/open-apis/im/v1/messages/%s"
+	patchMessageURL           = "/open-apis/im/v1/messages/%s"
 	recallMessageURL          = "/open-apis/im/v1/messages/%s"
 	messageReceiptURL         = "/open-apis/message/v4/read_info/"
 	ephemeralMessageURL       = "/open-apis/ephemeral/v1/send"
@@ -86,6 +87,9 @@ type DeleteEphemeralMessageResponse = BaseResponse
 
 // RecallMessageResponse .
 type RecallMessageResponse = BaseResponse
+
+// PatchMessageResponse
+type PatchMessageResponse = BaseResponse
 
 // MessageReceiptResponse .
 type MessageReceiptResponse struct {
@@ -215,6 +219,16 @@ func (bot Bot) PostMessage(om OutcomingMessage) (*PostMessageResponse, error) {
 		resp, err := bot.ReplyMessage(om)
 		return resp, err
 	}
+	return &respData, err
+}
+
+func (bot Bot) PatchMessage(messageID string, om OutcomingMessage) (*PatchMessageResponse, error) {
+	content := buildContent(om)
+	if content == "" {
+		return nil, ErrMessageNotBuild
+	}
+	var respData PatchMessageResponse
+	err := bot.PatchAPIRequest("PatchMessage", fmt.Sprintf(patchMessageURL, messageID), true, nil, &respData)
 	return &respData, err
 }
 
