@@ -27,6 +27,11 @@ type IMMessageRequest struct {
 	MsgType   string `json:"msg_type"`
 }
 
+// IMMessagePatchRequest .
+type IMMessagePatchRequest struct {
+	Content string `json:"content"`
+}
+
 // IMSendor .
 type IMSendor struct {
 	ID         string `json:"id"`
@@ -227,8 +232,11 @@ func (bot Bot) PatchMessage(messageID string, om OutcomingMessage) (*PatchMessag
 	if content == "" {
 		return nil, ErrMessageNotBuild
 	}
+	req := IMMessagePatchRequest{
+		Content: content,
+	}
 	var respData PatchMessageResponse
-	err := bot.PatchAPIRequest("PatchMessage", fmt.Sprintf(patchMessageURL, messageID), true, nil, &respData)
+	err := bot.PatchAPIRequest("PatchMessage", fmt.Sprintf(patchMessageURL, messageID), true, req, &respData)
 	return &respData, err
 }
 
